@@ -1,6 +1,7 @@
 package com.salesianostriana.dam.trianafy.controller;
 
 import com.salesianostriana.dam.trianafy.dto.CreateSongDto;
+import com.salesianostriana.dam.trianafy.dto.GetSongDto;
 import com.salesianostriana.dam.trianafy.dto.SongDtoConverter;
 import com.salesianostriana.dam.trianafy.model.Artist;
 import com.salesianostriana.dam.trianafy.model.Song;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@RestController("/")
 @RequiredArgsConstructor
 public class SongController {
 
@@ -22,7 +23,7 @@ public class SongController {
     private final ArtistService artistService;
     private final SongDtoConverter dtoConverter;
 
-    @GetMapping("/song/")
+    @GetMapping("/")
     public ResponseEntity<List<Song>> findAll(){
         if(songService.findAll().isEmpty()){
             return ResponseEntity.notFound().build();
@@ -31,7 +32,7 @@ public class SongController {
         }
     }
 
-    @GetMapping("/song/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Song> findOneById(@PathVariable Long id){
         if(songService.findById(id).isEmpty()){
             return ResponseEntity.notFound().build();
@@ -40,8 +41,8 @@ public class SongController {
         }
     }
 
-    @PostMapping("/song/")
-    public ResponseEntity<Song> create(@RequestBody CreateSongDto dto){
+    @PostMapping("/")
+    public ResponseEntity<GetSongDto> create(@RequestBody CreateSongDto dto){
 
         if(dto.getTitle().isEmpty() || dto.getAlbum().isEmpty()
         || dto.getYear().isEmpty() || dto.getArtistId() == null){
@@ -55,7 +56,7 @@ public class SongController {
             nueva = songService.add(nueva);
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(nueva);
+                    .body(dtoConverter.songToGetSongDto(nueva));
         }
     }
 
