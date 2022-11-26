@@ -17,6 +17,7 @@ public class SongDtoConverter {
     public GetSongDto songToGetSongDto(Song s){
         return GetSongDto
                 .builder()
+                .id(s.getId())
                 .title(s.getTitle())
                 .album(s.getAlbum())
                 .year(s.getYear())

@@ -64,10 +64,10 @@ public class ArtistController {
     }
 
     @DeleteMapping("/artist/{id}")
-    public ResponseEntity<Artist> delete(@PathVariable Long id){
-        if(service.findById(id).isEmpty()){
+    public ResponseEntity<Artist> delete(@PathVariable Long id) {
+        if (service.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
-        }else{
+        } else {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
     }
