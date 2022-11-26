@@ -74,7 +74,7 @@ public class SongController {
     public ResponseEntity<GetSongDto> update(@PathVariable Long id, @RequestBody CreateSongDto dto){
 
         if(dto.getArtistId() == null || dto.getTitle() == null
-        || dto.getAlbum() == null || dto.getYear() == null){
+        || dto.getAlbum() == null || dto.getYear() == null || artistService.existsById(dto.getArtistId()) == false){
             return ResponseEntity.badRequest().build();
         }
 

@@ -40,4 +40,12 @@ public class ArtistService {
         repository.deleteById(id);
     }
 
+    public boolean existsById(Long id){
+        if(repository.existsById(id)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
