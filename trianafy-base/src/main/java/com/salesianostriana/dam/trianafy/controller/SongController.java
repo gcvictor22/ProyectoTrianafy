@@ -3,6 +3,7 @@ package com.salesianostriana.dam.trianafy.controller;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.salesianostriana.dam.trianafy.dto.CreateSongDto;
 import com.salesianostriana.dam.trianafy.dto.GetSongDto;
+import com.salesianostriana.dam.trianafy.dto.GetSongIdDto;
 import com.salesianostriana.dam.trianafy.dto.SongDtoConverter;
 import com.salesianostriana.dam.trianafy.model.Artist;
 import com.salesianostriana.dam.trianafy.model.Song;
@@ -42,12 +43,12 @@ public class SongController {
     }
 
     @GetMapping("/song/{id}")
-    public ResponseEntity<Song> findOneById(@PathVariable Long id){
+    public ResponseEntity<GetSongIdDto> findOneById(@PathVariable Long id){
         if(songService.findById(id).isEmpty()){
             return ResponseEntity.notFound().build();
-        }else{
-            return ResponseEntity.of(songService.findById(id));
         }
+
+        return ResponseEntity.ok(dtoConverter.getSongToGetSongIdDto(songService.findById(id).get()));
     }
 
     @PostMapping("/song/")
@@ -72,18 +73,23 @@ public class SongController {
     @PutMapping("/song/{id}")
     public ResponseEntity<GetSongDto> update(@PathVariable Long id, @RequestBody CreateSongDto dto){
 
-        if(artistService.findById(dto.getArtistId()).isEmpty()){
+        if(dto.getArtistId() == null || dto.getTitle() == null
+        || dto.getAlbum() == null || dto.getYear() == null){
+            return ResponseEntity.badRequest().build();
+        }
+
+        if(songService.findById(id) == null){
             return ResponseEntity.notFound().build();
         }
 
-        Artist artist = artistService.findById(dto.getArtistId()).get();
+        Artist artist = artistService.findById(dto.getArtistId()).orElse(null);
 
         return ResponseEntity.of(
                 songService.findById(id)
                         .map(old -> {
+                            old.setArtist(artist);
                             old.setTitle(dto.getTitle());
                             old.setAlbum(dto.getAlbum());
-                            old.setArtist(artist);
                             old.setYear(dto.getYear());
                             songService.edit(dtoConverter.createSongDtoToSong(dto));
                             return Optional.of(dtoConverter.songToGetSongDto(songService.edit(old)));
