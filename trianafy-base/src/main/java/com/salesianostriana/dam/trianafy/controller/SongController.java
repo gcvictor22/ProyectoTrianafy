@@ -74,11 +74,11 @@ public class SongController {
     public ResponseEntity<GetSongDto> update(@PathVariable Long id, @RequestBody CreateSongDto dto){
 
         if(dto.getArtistId() == null || dto.getTitle() == null
-        || dto.getAlbum() == null || dto.getYear() == null || artistService.existsById(dto.getArtistId()) == false){
+        || dto.getAlbum() == null || dto.getYear() == null || !artistService.existsById(dto.getArtistId())){
             return ResponseEntity.badRequest().build();
         }
 
-        if(songService.findById(id) == null){
+        if(songService.findById(id).isEmpty()){
             return ResponseEntity.notFound().build();
         }
 
@@ -101,12 +101,10 @@ public class SongController {
 
     @DeleteMapping("/song/{id}")
     public ResponseEntity<Song> delete(@PathVariable Long id){
-        if(songService.findById(id).isEmpty()){
-            return ResponseEntity.notFound().build();
-        }else{
+        if(songService.findById(id).isPresent()){
             songService.deleteById(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 

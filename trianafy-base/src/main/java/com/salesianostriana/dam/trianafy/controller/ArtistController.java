@@ -68,9 +68,7 @@ public class ArtistController {
 
     @DeleteMapping("/artist/{id}")
     public ResponseEntity<Artist> delete(@PathVariable Long id) {
-        if (artistService.findById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
+        if (artistService.findById(id).isPresent()) {
 
             songService.findAll().forEach(song -> {
                 if(song.getArtist() != null){
@@ -81,8 +79,7 @@ public class ArtistController {
                 }
             });
             artistService.deleteById(id);
-
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
