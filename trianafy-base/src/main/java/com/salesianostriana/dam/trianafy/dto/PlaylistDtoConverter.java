@@ -8,10 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class PlaylistDtoConverter {
+
+    private final SongDtoConverter dtoConverter;
 
     public Playlist playlistDtoToPlaylist(CreatePlaylistDto dto){
 
@@ -37,6 +40,23 @@ public class PlaylistDtoConverter {
                 .name(p.getName())
                 .numberOfSongs(p.getSongs().size())
                 .build();
+    }
+
+    public GetAddSongToPlaylistDto playlistToGetAddSonToPlaylistDto(Playlist p){
+
+        List<GetSongDto> aux = new ArrayList<GetSongDto>();
+
+        p.getSongs().forEach(s ->{
+            aux.add(dtoConverter.songToGetSongDto(s));
+        });
+
+        return GetAddSongToPlaylistDto.builder()
+                .id(p.getId())
+                .name(p.getName())
+                .description(p.getDescription())
+                .songs(aux)
+                .build();
+
     }
 
 }

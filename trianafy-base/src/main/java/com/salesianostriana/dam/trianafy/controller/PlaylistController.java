@@ -1,14 +1,10 @@
 package com.salesianostriana.dam.trianafy.controller;
 
-import com.salesianostriana.dam.trianafy.dto.CreatePlaylistDto;
-import com.salesianostriana.dam.trianafy.dto.GetCreatedPlaylistDto;
-import com.salesianostriana.dam.trianafy.dto.GetPlaylistDto;
-import com.salesianostriana.dam.trianafy.dto.PlaylistDtoConverter;
-import com.salesianostriana.dam.trianafy.model.Artist;
+import com.salesianostriana.dam.trianafy.dto.*;
 import com.salesianostriana.dam.trianafy.model.Playlist;
 import com.salesianostriana.dam.trianafy.model.Song;
 import com.salesianostriana.dam.trianafy.service.PlaylistService;
-import lombok.AllArgsConstructor;
+import com.salesianostriana.dam.trianafy.service.SongService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +13,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequiredArgsConstructor
 public class PlaylistController {
 
     private final PlaylistService playlistService;
+    private final SongService songService;
     private final PlaylistDtoConverter dtoConverter;
+    private final SongController songController;
 
     @GetMapping("/list")
     public ResponseEntity<List<GetPlaylistDto>> findAll(){
@@ -43,13 +42,13 @@ public class PlaylistController {
     }
 
     @GetMapping("/list/{id}")
-    public ResponseEntity<Playlist> findOneById(@PathVariable Long id) {
+    public ResponseEntity<GetAddSongToPlaylistDto> findOneById(@PathVariable Long id) {
 
         if(!playlistService.existsById(id)){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        return ResponseEntity.ok(playlistService.findById(id).get());
+        return ResponseEntity.ok(dtoConverter.playlistToGetAddSonToPlaylistDto(playlistService.findById(id).get()));
 
     }
 
@@ -102,15 +101,81 @@ public class PlaylistController {
     @DeleteMapping("/list/{id}")
     public ResponseEntity<Song> delete(@PathVariable Long id){
 
-        if (!playlistService.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }else {
+        if (playlistService.existsById(id)) {
             playlistService.deleteById(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
     }
 
+    @PostMapping("/list/{idP}/song/{idS}")
+    public ResponseEntity<GetAddSongToPlaylistDto> addSong(@PathVariable Long idP, @PathVariable Long idS){
+        if(!playlistService.existsById(idP) || !songService.existsById(idS)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }else{
 
+            Playlist aux = playlistService.findById(idP).get();
+            aux.addSong(songService.findById(idS).get());
+
+            ResponseEntity.of(
+                    playlistService.findById(idP)
+                            .map(p -> {
+                                p.setSongs(aux.getSongs());
+                                return Optional.of(playlistService.edit(p));
+                            })
+                            .orElse(Optional.empty())
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    dtoConverter.playlistToGetAddSonToPlaylistDto(playlistService.findById(idP).get())
+            );
+        }
+    }
+
+    @GetMapping("/list/{id}/song")
+    public ResponseEntity<GetAddSongToPlaylistDto> getAllPlaylistSongs(@PathVariable Long id){
+        return findOneById(id);
+    }
+
+    @GetMapping("/list/{idP}/song/{idS}")
+    public ResponseEntity<GetSongIdDto> findSongFromPlaylist(@PathVariable Long idP, @PathVariable Long idS){
+
+        List<Song> auxList = playlistService.findById(idP).get().getSongs();
+        Song auxSong = songService.findById(idS).get();
+
+        if(!playlistService.existsById(idP) || !songService.existsById(idS) || !auxList.contains(auxSong)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return songController.findOneById(idS);
+        }
+    }
+
+   @DeleteMapping("/list/{idP}/song/{idS}")
+    public ResponseEntity<Playlist> deleteSongFromPlaylist (@PathVariable Long idP, @PathVariable Long idS){
+
+       List<Song> auxList = playlistService.findById(idP).get().getSongs();
+       Song auxSong = songService.findById(idS).get();
+
+       if(!playlistService.existsById(idP) || !songService.existsById(idS) || !auxList.contains(auxSong)){
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+       } else {
+
+           ResponseEntity.of(
+                   playlistService.findById(idP)
+                           .map(p -> {
+                               while(auxList.contains(auxSong)){
+                                   p.deleteSong(auxSong);
+                               }
+                               return Optional.of(playlistService.edit(p));
+                           })
+                           .orElse(Optional.empty())
+           );
+
+           return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+       }
+
+   }
 
 }
