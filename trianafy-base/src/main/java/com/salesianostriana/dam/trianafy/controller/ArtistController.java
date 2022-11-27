@@ -1,8 +1,6 @@
 package com.salesianostriana.dam.trianafy.controller;
 
 import com.salesianostriana.dam.trianafy.model.Artist;
-import com.salesianostriana.dam.trianafy.model.Song;
-import com.salesianostriana.dam.trianafy.repos.ArtistRepository;
 import com.salesianostriana.dam.trianafy.service.ArtistService;
 import com.salesianostriana.dam.trianafy.service.SongService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,13 +17,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Artistas", description = "Controlador de artistas")
+@Tag(name = "Artistas", description = "Controller de artistas")
 public class ArtistController {
 
     private final ArtistService artistService;
@@ -66,7 +63,7 @@ public class ArtistController {
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Artist.class))}),
             @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado el artista específico",
+                    description = "No se ha encontrado el artista específicado",
                     content = @Content),
     })
     @GetMapping("/artist/{id}")
@@ -80,12 +77,12 @@ public class ArtistController {
 
     @Operation(summary = "Obtiene un artista específico")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",
-                    description = "Se ha encontrado el artista",
+            @ApiResponse(responseCode = "201",
+                    description = "Se ha creado el artista",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Artist.class))}),
-            @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado el artista específicado",
+            @ApiResponse(responseCode = "400",
+                    description = "Los datos introducidos no corresponden con el formato adecuado",
                     content = @Content),
     })
     @PostMapping("/artist/")
@@ -104,8 +101,11 @@ public class ArtistController {
                     description = "Se ha encontrado el artista",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Artist.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Los datos introducidos no corresponden con el formato adecuado",
+                    content = @Content),
             @ApiResponse(responseCode = "404",
-                    description = "No se ha encontrado el artista específicado",
+                    description = "No se ha encontrado el artista especificado",
                     content = @Content),
     })
     @PutMapping("/artist/{id}")
