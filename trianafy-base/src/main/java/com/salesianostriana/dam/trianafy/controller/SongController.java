@@ -9,6 +9,13 @@ import com.salesianostriana.dam.trianafy.model.Artist;
 import com.salesianostriana.dam.trianafy.model.Song;
 import com.salesianostriana.dam.trianafy.service.ArtistService;
 import com.salesianostriana.dam.trianafy.service.SongService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +33,29 @@ public class SongController {
     private final ArtistService artistService;
     private final SongDtoConverter dtoConverter;
 
+    @Operation(summary = "Obtiene todas las canciones")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Se han encontrado todas las canciones",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Artist.class)),
+                            examples = {@ExampleObject(
+                                    value = """
+                                            [
+                                                { 
+                                                “id”: 1, “title”: “The song”,
+                                                “artist”: “Artist name”,
+                                                “album” : “The album”,
+                                                “year”: 2000
+                                                }
+                                            ]                                          
+                                            """
+                            )}
+                    )}),
+            @ApiResponse(responseCode = "404",
+                    description = "No se ha encontrado ningun artista",
+                    content = @Content),
+    })
     @GetMapping("/song/")
     public ResponseEntity<List<GetSongDto>> findAll(){
         if(songService.findAll().isEmpty()){
