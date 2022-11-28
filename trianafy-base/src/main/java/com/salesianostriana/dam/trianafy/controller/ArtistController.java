@@ -1,5 +1,6 @@
 package com.salesianostriana.dam.trianafy.controller;
 
+import com.salesianostriana.dam.trianafy.dto.CreateArtistDto;
 import com.salesianostriana.dam.trianafy.model.Artist;
 import com.salesianostriana.dam.trianafy.service.ArtistService;
 import com.salesianostriana.dam.trianafy.service.SongService;
@@ -86,12 +87,14 @@ public class ArtistController {
                     content = @Content),
     })
     @PostMapping("/artist/")
-    public ResponseEntity<Artist> create(@RequestBody Artist a){
+    public ResponseEntity<Artist> create(@RequestBody CreateArtistDto a){
         if (a.getName() == null) {
             return ResponseEntity.badRequest().build();
         }else{
+
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(artistService.add(a));
+                    .body(artistService.add(Artist.builder()
+                            .name(a.getName()).build()));
         }
     }
 
@@ -109,16 +112,18 @@ public class ArtistController {
                     content = @Content),
     })
     @PutMapping("/artist/{id}")
-    public ResponseEntity<Artist> update(@Parameter(description = "ID del artista") @PathVariable Long id, @RequestBody Artist a){
+    public ResponseEntity<Artist> update(@Parameter(description = "ID del artista") @PathVariable Long id, @RequestBody CreateArtistDto a){
         if(artistService.findById(id).isEmpty()){
             return ResponseEntity.badRequest().build();
+        }else if(!artistService.existsById(id)){
+            return ResponseEntity.notFound().build();
         }else {
 
             return ResponseEntity.of(
                     artistService.findById(id)
                             .map(old -> {
                                 old.setName(a.getName());
-                                return Optional.of(artistService.add(old));
+                                return Optional.of(artistService.edit(old));
                             })
                             .orElse(Optional.empty())
             );
