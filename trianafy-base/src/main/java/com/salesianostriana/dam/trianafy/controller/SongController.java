@@ -1,13 +1,12 @@
 package com.salesianostriana.dam.trianafy.controller;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
-import com.salesianostriana.dam.trianafy.dto.CreateSongDto;
-import com.salesianostriana.dam.trianafy.dto.GetSongDto;
-import com.salesianostriana.dam.trianafy.dto.GetSongIdDto;
-import com.salesianostriana.dam.trianafy.dto.SongDtoConverter;
+import com.salesianostriana.dam.trianafy.dto.*;
 import com.salesianostriana.dam.trianafy.model.Artist;
+import com.salesianostriana.dam.trianafy.model.Playlist;
 import com.salesianostriana.dam.trianafy.model.Song;
 import com.salesianostriana.dam.trianafy.service.ArtistService;
+import com.salesianostriana.dam.trianafy.service.PlaylistService;
 import com.salesianostriana.dam.trianafy.service.SongService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,6 +34,7 @@ public class SongController {
     private final SongService songService;
     private final ArtistService artistService;
     private final SongDtoConverter dtoConverter;
+    private final PlaylistService playlistService;
 
     @Operation(summary = "Obtiene todas las canciones")
     @ApiResponses(value = {
@@ -182,6 +182,22 @@ public class SongController {
     @DeleteMapping("/song/{id}")
     public ResponseEntity<Song> delete(@Parameter(description = "ID de la canción") @PathVariable Long id){
         if(songService.findById(id).isPresent()){
+
+//            playlistService.findAll().forEach(p -> {
+//                p.getSongs().removeAll(songService.findById(id).stream().toList());
+//                playlistService.edit(p);
+//            });
+
+            List<Playlist> aux = playlistService.findAll().stream()
+                    .filter(p -> p.getSongs().contains(songService.findById(id).get())).toList();
+
+            aux.stream().forEach(p -> {
+                while (p.getSongs().contains(songService.findById(id).get())){
+                    p.deleteSong(songService.findById(id).get());
+                }
+                playlistService.edit(p);
+            });
+
             songService.deleteById(id);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
