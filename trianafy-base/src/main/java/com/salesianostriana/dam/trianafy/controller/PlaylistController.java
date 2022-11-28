@@ -249,13 +249,17 @@ public class PlaylistController {
     @GetMapping("/list/{idP}/song/{idS}")
     public ResponseEntity<GetSongIdDto> findSongFromPlaylist(@Parameter(description = "ID de la playlist") @PathVariable Long idP, @Parameter(description = "ID de la canción") @PathVariable Long idS){
 
-        List<Song> auxList = playlistService.findById(idP).get().getSongs();
-        Song auxSong = songService.findById(idS).get();
-
-        if(!playlistService.existsById(idP) || !songService.existsById(idS) || !auxList.contains(auxSong)){
+        if(!playlistService.existsById(idP) || !songService.existsById(idS)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else {
-            return songController.findOneById(idS);
+        }else{
+            List<Song> auxList = playlistService.findById(idP).get().getSongs();
+            Song auxSong = songService.findById(idS).get();
+            if(!auxList.contains(auxSong)){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            } else {
+                return songController.findOneById(idS);
+            }
+
         }
     }
 

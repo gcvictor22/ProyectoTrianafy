@@ -183,11 +183,6 @@ public class SongController {
     public ResponseEntity<Song> delete(@Parameter(description = "ID de la canción") @PathVariable Long id){
         if(songService.findById(id).isPresent()){
 
-//            playlistService.findAll().forEach(p -> {
-//                p.getSongs().removeAll(songService.findById(id).stream().toList());
-//                playlistService.edit(p);
-//            });
-
             List<Playlist> aux = playlistService.findAll().stream()
                     .filter(p -> p.getSongs().contains(songService.findById(id).get())).toList();
 
