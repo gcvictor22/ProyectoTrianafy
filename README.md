@@ -68,3 +68,18 @@ Dentro de la colección hay tres carpetas haciendo referencia a los controladore
 sea más clara su organización.
 
 <img src="./resources/postman.png"/>
+
+
+### Organización
+
+Para organizarme de manera más cómoda, he hecho empleo de las herramientas que nos proporciona
+git, tales como la creación de ramas, o el project dashboard par ver el progreso de la aplicación.
+
+<img src="./resources/dashboard.png"/>
+
+A parte también he usuado una plantilla de historias de usuarios para ver el progreso no solo de los
+controllers, como se muestra en la imagen anterior, sino que tambien puedo ver el progreso de los
+distintos endpoints.
+
+<img src="./resources/historias.png"/>
+
