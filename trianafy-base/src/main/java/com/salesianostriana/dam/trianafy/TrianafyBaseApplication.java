@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Info(description = "Rest API de Trianafy",
 		version = "Gypsy Version",
 		contact = @Contact(email = "gonzalez.cavic22@triana.salesianos.edu", name = "Víctor"),
-		title = "Trianay API"
+		title = "Trianafy API"
 )
 )
 public class TrianafyBaseApplication {
