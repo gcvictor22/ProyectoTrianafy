@@ -34,7 +34,7 @@ public class PlaylistController {
     private final SongService songService;
     private final PlaylistDtoConverter dtoConverter;
     private final SongController songController;
-
+/*
     @Operation(summary = "Obtiene todas las playlist")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -295,5 +295,5 @@ public class PlaylistController {
        }
 
    }
-
+*/
 }

@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class TestModel {
-
+/*
     private final ArtistService artistService;
     private final SongService songService;
     private final PlaylistService playlistService;
@@ -126,6 +126,6 @@ public class TestModel {
 
 
 
-    }
+    }*/
 
 }

@@ -29,6 +29,16 @@ public class ArtistController {
     private final ArtistService artistService;
     private final SongService songService;
 
+    @GetMapping("/artist/{id}")
+    public Artist findOneById(@Parameter(description = "ID del artista") @PathVariable Long id){
+        return artistService.findById(id);
+    }
+
+    @GetMapping("/artist/")
+    public List<Artist> findAll(){
+        return artistService.findAll();
+    }
+/*
     @Operation(summary = "Obtiene todos los artistas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -152,4 +162,5 @@ public class ArtistController {
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+ */
 }

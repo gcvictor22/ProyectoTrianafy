@@ -35,7 +35,7 @@ public class SongController {
     private final ArtistService artistService;
     private final SongDtoConverter dtoConverter;
     private final PlaylistService playlistService;
-
+/*
     @Operation(summary = "Obtiene todas las canciones")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -198,6 +198,6 @@ public class SongController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-
+*/
 
 }
