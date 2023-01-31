@@ -2,7 +2,6 @@ package com.salesianostriana.dam.trianafy.error;
 
 import com.salesianostriana.dam.trianafy.error.model.impl.ApiErrorImpl;
 import com.salesianostriana.dam.trianafy.error.model.impl.ApiValidationSubError;
-import com.salesianostriana.dam.trianafy.exception.EmptyException;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -20,7 +19,10 @@ import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController
+
+
+
+@RestControllerAdvice
 public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
 
     @Override
@@ -88,8 +90,8 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
                                 .message(message)
                                 .path(((ServletWebRequest) request).getRequest().getRequestURI())
                                 .subErrors(subErrors.stream()
-                                        .map(ApiValidationSubError::fromObjectError)
-                                        .collect(Collectors.toList())
+                                            .map(ApiValidationSubError::fromObjectError)
+                                            .collect(Collectors.toList())
                                 )
                                 .build()
                 );

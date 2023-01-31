@@ -1,4 +1,4 @@
-package com.salesianostriana.dam.trianafy.error.model.erroratrib;
+package com.salesianostriana.dam.trianafy.error.model.errorattributes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salesianostriana.dam.trianafy.error.model.ApiError;
@@ -15,16 +15,14 @@ import java.util.Map;
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 @Component
 @RequiredArgsConstructor
-public class ApiCustomAtributtes extends DefaultErrorAttributes {
+public class ApiCustomErrorAttributes extends DefaultErrorAttributes {
 
-    private final ObjectMapper mapper;
+    private final ObjectMapper objectMapper;
 
     @Override
     public Map<String, Object> getErrorAttributes(WebRequest webRequest, ErrorAttributeOptions options) {
-
-        Map<String, Object> defErrorAtributtes = super.getErrorAttributes(webRequest, options);
-        ApiError apiError = ApiError.fromErrorAtributtes(defErrorAtributtes);
-
-        return mapper.convertValue(apiError, Map.class);
+        Map<String,Object> defaultErrorAttributes = super.getErrorAttributes(webRequest, options);
+        ApiError apiError = ApiError.fromErrorAttributes(defaultErrorAttributes);
+        return objectMapper.convertValue(apiError, Map.class);
     }
 }

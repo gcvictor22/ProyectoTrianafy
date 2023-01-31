@@ -15,8 +15,7 @@ import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class ApiErrorImpl implements ApiError {
 
     private HttpStatus status;
@@ -35,5 +34,6 @@ public class ApiErrorImpl implements ApiError {
     public int getStatusCode() {
         return status != null ? status.value() : 0;
     }
+
 
 }

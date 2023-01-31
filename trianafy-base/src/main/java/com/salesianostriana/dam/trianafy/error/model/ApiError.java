@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 public interface ApiError {
 
     HttpStatus getStatus();
@@ -19,39 +20,34 @@ public interface ApiError {
     LocalDateTime getDate();
     List<ApiSubError> getSubErrors();
 
-    static ApiError fromErrorAtributtes(Map<String, Object> defErrorAtr){
-        int statusCode = -1;
-        HttpStatus status = null;
 
-        if (defErrorAtr.containsKey("status")){
-            if (defErrorAtr.get("status") instanceof Integer){
-                statusCode = (Integer) defErrorAtr.get("status");
-                status = HttpStatus.valueOf(statusCode);
-            } else if(defErrorAtr.get("status") instanceof String){
-                statusCode = status.value();
-                status = HttpStatus.valueOf((String) defErrorAtr.get("status"));
-            }
-        }
+    static ApiError fromErrorAttributes(Map<String, Object> defaultErrorAttributesMap) {
+
+        int statusCode = ((Integer)defaultErrorAttributesMap.get("status")).intValue();
+
 
         ApiErrorImpl result =
                 ApiErrorImpl.builder()
-                        .status(status)
+                        .status(HttpStatus.valueOf(statusCode))
                         .statusCode(statusCode)
-                        .message((String) defErrorAtr.getOrDefault("message", "No message avialable"))
-                        .path((String) defErrorAtr.getOrDefault("path", "No path available"))
+                        .message((String) defaultErrorAttributesMap.getOrDefault("message", "No message available"))
+                        .path((String) defaultErrorAttributesMap.getOrDefault("path", "No path available"))
                         .build();
 
-        if (defErrorAtr.containsKey("errors")){
-            List<ObjectError> errors = (List<ObjectError>) defErrorAtr.get("errors");
+        if (defaultErrorAttributesMap.containsKey("errors")) {
+
+            List<ObjectError> errors = (List<ObjectError>) defaultErrorAttributesMap.get("errors");
 
             List<ApiSubError> subErrors = errors.stream()
                     .map(ApiValidationSubError::fromObjectError)
                     .collect(Collectors.toList());
 
             result.setSubErrors(subErrors);
+
         }
 
         return result;
     }
+
 
 }
