@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +38,11 @@ public class ArtistController {
     @GetMapping("/artist/")
     public List<Artist> findAll(){
         return artistService.findAll();
+    }
+
+    @PostMapping("/artist/")
+    public Artist create(@Valid @RequestBody Artist a){
+        return artistService.add(a);
     }
 /*
     @Operation(summary = "Obtiene todos los artistas")
